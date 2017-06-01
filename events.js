@@ -3,20 +3,24 @@ const deepstream = require('deepstream.io-client-js')
 const clientA = deepstream('localhost:6020').login()
 const clientB = deepstream('localhost:6020').login()
 
+
+
+clientB.event.emit('my_event')
+
 setTimeout(function () {
   clientA.event.subscribe('my_event', () => {
     console.log('clientA subscribed')
   })
-}, 10)
+}, 30)
 setTimeout(() => {
   clientB.event.subscribe('my_event', () => {
     console.log('clientB subscribed')
   })
-}, 20)
+}, 50)
 
 setTimeout(() => {
   clientB.event.emit('my_event')
-}, 50)
+}, 80)
 
 setTimeout(() => {
   clientA.event.unsubscribe('my_event')
@@ -37,5 +41,6 @@ setTimeout(() => {
 
 
 setTimeout(() => {
-  console.log('\nscript finished')
+  clientA.close()
+  clientB.close()
 }, 200)
