@@ -30,7 +30,6 @@ setTimeout(() => {
   })
 }, 130)
 
-// docs mention a callback being not-optional.  i havn't included one here.  should i be triggering an error?
 setTimeout(() => {
   clientA.presence.unsubscribe()
 }, 150)
