@@ -1,47 +1,60 @@
 const deepstream = require('deepstream.io-client-js')
 
 const clientA = deepstream('localhost:6020').login()
-const myRecord = clientA.record.getRecord('record_name')
+const clientB = deepstream('localhost:6020').login()
+const myRecordA = clientA.record.getRecord('record_name')
+const myRecordB = clientB.record.getRecord('record_name')
 
 setTimeout(() => {
   console.log(
       '4 usages at end of log:',
       clientA.record.getRecord('record_name').usages,
-      myRecord.subscribe('grandchild', printing),
+      myRecordA.subscribe('grandchild', printingA),
+      myRecordB.subscribe('grandchild', printingB),
       clientA.record.getRecord('record_name').name,
       clientA.record.getRecord('record_name').usages)
 }, 30)
 
 setTimeout(() => {
   console.log('setting record data…')
-  myRecord.set('grandchild', 'Morty')
+  myRecordA.set('grandchild', 'Morty')
+  myRecordB.set('grandchild', 'Morty')
 }, 50)
 
 setTimeout(() => {
   console.log(
-      'getting record:',
-      myRecord.get())
+      'getting record path:',
+      myRecordA.get('grandchild'))
 }, 60)
 
 setTimeout(() => {
-  console.log('setting record data…')
-  myRecord.set('grandchild', 'Summer')
+  console.log('discarding A…')
+  myRecordB.discard()
 }, 70)
 
 setTimeout(() => {
+  console.log('setting record data…')
+  myRecordA.set('grandchild', 'Summer')
+}, 90)
+
+setTimeout(() => {
   console.log(
-      'getting record:',
-      myRecord.get())
-}, 100)
+      'getting all record data:',
+      myRecordA.get())
+}, 170)
 
 
 
 setTimeout(() => {
   clientA.close()
+  clientB.close()
 }, 200)
 
 
 
-function printing() {
-  console.log(myRecord.name)
+function printingA() {
+  console.log('A:', myRecordA.name, myRecordA.get('grandchild'))
+}
+function printingB() {
+  console.log('B:', myRecordB.name, myRecordB.get('grandchild'))
 }
